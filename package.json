@@ -2,12 +2,17 @@
 	"name": "kubernetesapply",
 	"displayName": "Kubernetes Apply",
 	"description": "Apply and Delete Kubernetes resource files",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"publisher": "ShaiMendel",
-	"keywords": ["kubernetes", "apply", "yaml", "kubectl"],
+	"keywords": [
+		"kubernetes",
+		"apply",
+		"yaml",
+		"kubectl"
+	],
 	"icon": "images/apply.png",
 	"engines": {
-		"vscode": "^1.43.0"
+		"vscode": "^1.93.0"
 	},
 	"categories": [
 		"Other"
@@ -28,17 +33,43 @@
 				"title": "K8S: Delete resource"
 			}
 		],
+		"keybindings": [
+			{
+				"command": "kubernetesapply.apply",
+				"key": "ctrl+shift+a",
+				"mac": "cmd+shift+a",
+				"when": "explorerViewletFocus"
+			},
+			{
+				"command": "kubernetesapply.delete",
+				"key": "ctrl+shift+d",
+				"mac": "cmd+shift+d",
+				"when": "explorerViewletFocus"
+			}
+		],
 		"menus": {
 			"explorer/context": [
 				{
 					"command": "kubernetesapply.apply",
 					"group": "kubernetesapplygroup@1",
-					"when": "resourceExtname == .yaml"
+					"when": "resourceExtname == .yaml || resourceExtname == .yml"
 				},
 				{
 					"command": "kubernetesapply.delete",
 					"group": "kubernetesapplygroup@2",
-					"when": "resourceExtname == .yaml"
+					"when": "resourceExtname == .yaml || resourceExtname == .yml"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "kubernetesapply.apply",
+					"group": "kubernetesapplygroup@1",
+					"when": "resourceExtname == .yaml || resourceExtname == .yml"
+				},
+				{
+					"command": "kubernetesapply.delete",
+					"group": "kubernetesapplygroup@2",
+					"when": "resourceExtname == .yaml || resourceExtname == .yml"
 				}
 			]
 		}
@@ -56,13 +87,13 @@
 		"@types/glob": "^7.1.1",
 		"@types/mocha": "^7.0.2",
 		"@types/node": "^13.11.0",
-		"@types/vscode": "^1.43.0",
+		"@types/vscode": "^1.93.0",
 		"@typescript-eslint/eslint-plugin": "^2.26.0",
 		"@typescript-eslint/parser": "^2.26.0",
 		"eslint": "^6.8.0",
 		"glob": "^7.1.6",
 		"mocha": "^7.1.1",
-		"typescript": "^3.8.3",
+		"typescript": "^5.0.0",
 		"vscode-test": "^1.3.0"
 	},
 	"release": {
@@ -84,5 +115,5 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/shaimendel/vscode-plugin-cicd-github-actions.git"
-  }
+	}
 }

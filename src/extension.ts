@@ -5,17 +5,25 @@ export function activate(context: vscode.ExtensionContext) {
 	console.log('Congratulations, your extension "kubernetesapply" is now active!');
 
 	function runResourceCommand(command: string, uri: vscode.Uri | undefined) {
-		if (uri === undefined && vscode.window.activeTextEditor === undefined) {
+		let resourcePath = '';
+
+		// If URI is provided (from context menu), use it
+		if (uri) {
+			resourcePath = uri.fsPath;
+		} else if (vscode.window.activeTextEditor !== undefined) {
+			// If no URI but there's an active text editor, use the current file
+			const currentlyOpenTabfilePath = vscode.window.activeTextEditor.document.fileName;
+			resourcePath = currentlyOpenTabfilePath;
+		} else {
+			// If neither URI nor active editor, show error
+			vscode.window.showErrorMessage('No file selected. Please select a YAML file in the explorer or open a YAML file in the editor.');
 			return;
 		}
 
-		let resourcePath = '';
-		if (uri !== undefined) {
-			resourcePath = uri.fsPath;
-		}
-		else if (vscode.window.activeTextEditor !== undefined) {
-			const currentlyOpenTabfilePath = vscode.window.activeTextEditor.document.fileName;
-			resourcePath = path.basename(currentlyOpenTabfilePath);
+		// Check if the file is a YAML file
+		if (!resourcePath.endsWith('.yaml') && !resourcePath.endsWith('.yml')) {
+			vscode.window.showErrorMessage('Selected file is not a YAML file. Please select a .yaml or .yml file.');
+			return;
 		}
 	 
 		if (!ensureTerminalExists()) {
@@ -24,13 +32,14 @@ export function activate(context: vscode.ExtensionContext) {
 
 		const terminal = selectTerminal();
 		terminal.sendText(`kubectl ${command} -f ${resourcePath}`);
+		vscode.window.showInformationMessage(`kubectl ${command} executed for: ${path.basename(resourcePath)}`);
 	}
 
-	let disposableApply = vscode.commands.registerCommand('kubernetesapply.apply', (uri:vscode.Uri) => {
+	let disposableApply = vscode.commands.registerCommand('kubernetesapply.apply', (uri?: vscode.Uri) => {
 		runResourceCommand('apply', uri);
 	});
 
-	let disposableDelete = vscode.commands.registerCommand('kubernetesapply.delete', (uri:vscode.Uri) => {
+	let disposableDelete = vscode.commands.registerCommand('kubernetesapply.delete', (uri?: vscode.Uri) => {
 		runResourceCommand('delete', uri);
 	});
 
